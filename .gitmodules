@@ -1,0 +1,3 @@
+[submodule "mediaremote-adapter"]
+	path = mediaremote-adapter
+	url = https://github.com/ungive/mediaremote-adapter

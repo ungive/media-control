@@ -1,0 +1,9 @@
+dist
+build
+__pycache__
+venv
+.venv
+perltidy.ERR
+.DS_Store
+notes
+todo*.txt

@@ -1,0 +1,8 @@
+{
+    "recommendations": [
+        "ms-vscode.cmake-tools",
+        "cheshirekow.cmake-format",
+        "kaktus.perltidy-more",
+        "yzhang.markdown-all-in-one"
+    ]
+}
