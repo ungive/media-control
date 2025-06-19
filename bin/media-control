@@ -8,6 +8,8 @@ use FindBin;
 use File::Spec;
 use File::Basename;
 
+use constant VERSION => '0.3.0';
+
 my $script_path =
   File::Spec->catfile($FindBin::Bin, '..', 'lib', 'media-control',
   'mediaremote-adapter.pl');
@@ -105,9 +107,19 @@ Options:
 
 Other:
   help      Prints this help page
+  version   Prints the version and license information
 
 HELP
   exit;
+}
+
+sub print_version() {
+  my $version = VERSION;
+  print <<"VERSION";
+media-control $version
+Copyright (c) 2025 Jonas van den Berg
+Licensed under the BSD 3-Clause License.
+VERSION
 }
 
 sub has_command_id {
@@ -198,6 +210,9 @@ sub safe_large_int {
 my $command = shift @ARGV or print_help() and exit;
 if ($command eq 'help' || $command eq '--help') {
   print_help();
+}
+elsif ($command eq 'version' || $command eq '--version') {
+  print_version();
 }
 elsif ($command eq 'stream') {
   delegate($command);
