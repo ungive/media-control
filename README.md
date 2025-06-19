@@ -27,7 +27,7 @@ $ media-control                    # Print help
 - [Watch for song changes](#watch-for-song-changes)
 - [Live view of the current timeline position](#live-view-of-the-current-timeline-position)
 - [Pause media playback once the current track ends](#pause-media-playback-once-the-current-track-ends)
-- [Skip Spotify ads by reopening it when an ad is detected](#skip-spotify-ads-by-reopening-it-when-an-ad-is-detected)
+- [Skip Spotify ads by reopening the app whenever an ad is detected](#skip-spotify-ads-by-reopening-the-app-whenever-an-ad-is-detected)
 
 ### Display the current song in your menu bar
 
@@ -144,12 +144,17 @@ index=0; media-control stream | \
     done
 ```
 
-### Skip Spotify ads by reopening it when an ad is detected
+### Skip Spotify ads by reopening the app whenever an ad is detected
 
 No more ads with a vanilla Spotify installation.
-
 This makes use of the fact that with advertisments
-the album is always an empty string.
+the album name is always an empty string.
+This script watches for ads, closes the app when an ad is detected,
+reopens it and starts playback again.
+
+It's so fast, you don't even notice that it was reopened!
+
+The app opens below other windows, so you don't get disturbed.
 
 ```sh
 media-control stream --no-diff | \
