@@ -196,7 +196,7 @@ sub safe_large_int {
 }
 
 my $command = shift @ARGV or print_help() and exit;
-if ($command eq 'help') {
+if ($command eq 'help' || $command eq '--help') {
   print_help();
 }
 elsif ($command eq 'stream') {
