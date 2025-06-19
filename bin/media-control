@@ -56,6 +56,7 @@ Controls:
   seek POSITION   Seek to a specific timeline position (seconds)
   shuffle MODE    Set the shuffle mode: off (1), albums (2), tracks (3)
   repeat MODE     Set the repeat mode: off (1), track (2), playlist (3)
+  speed SPEED     Set the playback speed
 
 HELP
   my $commands_title = "Commands:";
@@ -267,6 +268,15 @@ elsif ($command eq 'repeat') {
   }
   else {
     fail "Invalid mode for command '$command': '$mode_value'";
+  }
+}
+elsif ($command eq 'speed') {
+  my $speed = shift_integer();
+  if (defined $speed) {
+    delegate($command, $speed);
+  }
+  else {
+    fail "Missing speed for command '$command'";
   }
 }
 else {
