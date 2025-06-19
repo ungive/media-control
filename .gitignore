@@ -7,3 +7,4 @@ perltidy.ERR
 .DS_Store
 notes
 todo*.txt
+.cache
