@@ -17,7 +17,13 @@ def limit(text, max_length):
     return text
 
 
-output = subprocess.check_output(["media-control", "get"], text=True)
+try:
+    output = subprocess.check_output(
+        ["/opt/homebrew/bin/media-control", "get"], text=True
+    )
+except Exception as e:
+    print(str(e))
+    exit(1)
 data = json.loads(output)
 if data is None:
     print("\u25fc No media")
