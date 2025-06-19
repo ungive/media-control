@@ -26,6 +26,8 @@ $ media-control                    # Print help
 - [Inspect raw data without spamming your terminal](#inspect-raw-data-without-spamming-your-terminal)
 - [Watch for song changes](#watch-for-song-changes)
 - [Live view of the current timeline position](#live-view-of-the-current-timeline-position)
+- [Pause media playback once the current track ends](#pause-media-playback-once-the-current-track-ends)
+- [Skip Spotify ads by reopening it when an ad is detected](#skip-spotify-ads-by-reopening-it-when-an-ad-is-detected)
 
 ### Display the current song in your menu bar
 
@@ -73,6 +75,8 @@ index=0; media-control stream | \
     done
 ```
 
+![](./assets/cover-dump.png)
+
 ### Inspect raw data without spamming your terminal
 
 This replaces the base64 encoded image data with `true`, if it has a value.
@@ -80,11 +84,13 @@ This replaces the base64 encoded image data with `true`, if it has a value.
 ```sh
 media-control stream | \
     while IFS= read -r line; do \
-        jq 'if .payload.artworkDataBase64 != null then
+        jq -c 'if .payload.artworkDataBase64 != null then
             .payload.artworkDataBase64 = true
         end' <<< "$line"; \
     done
 ```
+
+![](./assets/inspect-no-spam.png)
 
 ### Watch for song changes
 
@@ -121,6 +127,57 @@ including timeline changes:
 
 ```
 (com.spotify.client) ▶ 00:46/04:58  Happier Than Ever - Billie Eilish
+```
+
+### Pause media playback once the current track ends
+
+```sh
+index=0; media-control stream | \
+    while IFS= read -r line; do \
+        if jq -e ".diff == false" <<< "$line" >/dev/null; then \
+            if [ "$index" -gt 0 ]; then \
+                media-control pause; \
+                exit 0; \
+            fi; \
+            ((index++)); \
+        fi \
+    done
+```
+
+### Skip Spotify ads by reopening it when an ad is detected
+
+No more ads with a vanilla Spotify installation.
+
+This makes use of the fact that with advertisments
+the album is always an empty string.
+
+```sh
+media-control stream --no-diff | \
+    while IFS= read -r line; do \
+        bundle_id="com.spotify.client"; \
+        if jq -e ".payload.bundleIdentifier != \"$bundle_id\"" <<< "$line" >/dev/null; then \
+            continue; \
+        fi; \
+        if jq -e '(.payload.album != "")' <<< "$line" >/dev/null; then \
+            continue; \
+        fi; \
+        echo "Detected advertisement for $bundle_id, closing app"; \
+        osascript -e "tell application id \"$bundle_id\" to quit"; \
+        while [ "$(osascript -e "application id \"$bundle_id\" is running")" = "true" ]; do \
+            sleep 0.1; \
+        done; \
+        echo "Reopening $bundle_id"; \
+        osascript -e "tell application id \"$bundle_id\" to launch"; \
+        echo "Waiting for $bundle_id to be the now playing application"; \
+        while true; do \
+            osascript -e "tell application id \"$bundle_id\" to play"; \
+            sleep 0.1; \
+            if media-control get | jq -e '.bundleIdentifier == "com.spotify.client"' >/dev/null; then \
+                echo "Spotify is now playing"; \
+                break; \
+            fi; \
+        done; \
+    done
 ```
 
 ## License
