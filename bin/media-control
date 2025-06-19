@@ -33,7 +33,7 @@ my @command_list = (
   { name => 'end-backward-seek', id => 11, help => 'Stop seeking backward' },
   { name => 'go-back-fifteen-seconds', id => 12, help => 'Go back 15 seconds' },
   { name => 'skip-fifteen-seconds', id => 13, help => 'Skip ahead 15 seconds' },
-  { name => 'send <ID>', id => undef, help => 'Send a command by its ID' },
+  { name => 'send ID', id => undef, help => 'Send a command by its ID' },
 );
 #>>>
 
@@ -45,16 +45,14 @@ Example usage:
   $basename get
   $basename stream
   $basename toggle-play-pause
-  $basename send 7
+  $basename seek 22.4
 
 Metadata:
-  get     Read now playing information once
-  stream  Stream updates to now playing information
+  get      Read now playing information once
+  stream   Stream updates to now playing information
 
-Options:
-  stream
-    --no-diff     Disable diffing and always dump all metadata
-    --debounce=N  Delay in milliseconds to prevent spam (0 by default)
+Controls:
+  seek POSITION   Seek to a specific timeline position (seconds)
 
 HELP
   my $commands_title = "Commands:";
@@ -70,8 +68,7 @@ HELP
     my $length = length($command->{help});
     $max_help_length = $length if $length > $max_help_length;
   }
-  my $spacing = 2;
-  my $padding = 2;
+  my $padding = 3;
   my $max_name_padding = $max_name_length + $padding;
   my $max_help_padding = $max_help_length + $padding;
   print $commands_title
@@ -94,6 +91,13 @@ HELP
     print"\n";
   }
   print <<"HELP";
+
+Options:
+  stream
+    --no-diff      Disable diffing and always dump all metadata
+    --debounce=N   Delay in milliseconds to prevent spam (0 by default)
+  seek
+    --micros       Interpret the passed value as microseconds
 
 HELP
   exit;
@@ -123,6 +127,54 @@ sub delegate {
   exit 1;
 }
 
+sub shift_integer() {
+  my $value = shift @ARGV;
+  if (defined $value && $value !~ /^0$/) {
+    $value =~ s/^0+//;
+  }
+  if (defined $value && $value !~ /^-?\d+$/) {
+    fail "'$value' is not a valid integer";
+  }
+  return $value;
+}
+
+sub shift_number() {
+  my $value = shift @ARGV;
+  if (defined $value && $value !~ /^0$/) {
+    $value =~ s/^0+//;
+  }
+  if (defined $value && $value !~ /^-?\d+(\.\d+)?$/) {
+    fail "'$value' is not a valid number";
+  }
+  return $value;
+}
+
+sub check_and_shift_option {
+  my ($name) = @_;
+  my $arg = "--$name";
+  for (my $i = 0; $i < @ARGV; $i++) {
+    if ($ARGV[$i] eq $arg) {
+      splice(@ARGV, $i, 1);
+      return 1;
+    }
+  }
+  return 0;
+}
+
+sub unwrap_scientific_number {
+  my ($value) = @_;
+  if ($value =~ /^[+-]?(\d+\.?\d*|\.\d+)[eE][+-]?\d+$/) {
+    return sprintf("%.0f", $value);
+  }
+  return $value;
+}
+
+sub safe_large_int {
+  my ($value) = @_;
+  $value = int($value);
+  return unwrap_scientific_number($value);
+}
+
 my $command = shift @ARGV or print_help() and exit;
 if ($command eq 'help') {
   print_help();
@@ -134,13 +186,7 @@ elsif ($command eq 'get') {
   delegate($command);
 }
 elsif ($command eq 'send') {
-  my $id = shift @ARGV;
-  if (defined $id && $id !~ /^0$/) {
-    $id =~ s/^0+//;
-  }
-  if (defined $id && $id !~ /^\d+$/) {
-    fail "'$id' is not a valid command ID";
-  }
+  my $id = shift_integer();
   if (defined $id) {
     if (has_command_id($id)) {
       delegate($command, $id);
@@ -151,6 +197,20 @@ elsif ($command eq 'send') {
   }
   else {
     fail "Missing ID for command '$command'";
+  }
+}
+elsif ($command eq 'seek') {
+  my $multiplier = 1000 * 1000;
+  if (check_and_shift_option("micros")) {
+    $multiplier = 1;
+  }
+  my $position = shift_number();
+  if (defined $position) {
+    $position = safe_large_int($position * $multiplier);
+    delegate($command, $position);
+  }
+  else {
+    fail "Missing position for command '$command'";
   }
 }
 else {
