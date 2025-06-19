@@ -45,6 +45,7 @@ Example usage:
   $basename get
   $basename stream
   $basename toggle-play-pause
+  $basename repeat track
   $basename seek 22.4
 
 Metadata:
@@ -54,6 +55,7 @@ Metadata:
 Controls:
   seek POSITION   Seek to a specific timeline position (seconds)
   shuffle MODE    Set the shuffle mode: off (1), albums (2), tracks (3)
+  repeat MODE     Set the repeat mode: off (1), track (2), playlist (3)
 
 HELP
   my $commands_title = "Commands:";
@@ -235,9 +237,29 @@ elsif ($command eq 'shuffle') {
   my $mode = parse_integer_or_find(
     $mode_value,
     {
-      off    => 1,
+      off => 1,
       albums => 2,
       tracks => 3,
+    }
+  );
+  if (defined $mode) {
+    delegate($command, $mode);
+  }
+  else {
+    fail "Invalid mode for command '$command': '$mode_value'";
+  }
+}
+elsif ($command eq 'repeat') {
+  my $mode_value = shift @ARGV;
+  if (!defined $mode_value) {
+    fail "Missing mode for command '$command'";
+  }
+  my $mode = parse_integer_or_find(
+    $mode_value,
+    {
+      off => 1,
+      track => 2,
+      playlist => 3,
     }
   );
   if (defined $mode) {
