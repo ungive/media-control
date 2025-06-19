@@ -103,6 +103,9 @@ Options:
   seek
     --micros       Interpret the passed value as microseconds
 
+Other:
+  help      Prints this help page
+
 HELP
   exit;
 }
