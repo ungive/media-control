@@ -53,6 +53,7 @@ Metadata:
 
 Controls:
   seek POSITION   Seek to a specific timeline position (seconds)
+  shuffle MODE    Set the shuffle mode: off (1), albums (2), tracks (3)
 
 HELP
   my $commands_title = "Commands:";
@@ -138,6 +139,19 @@ sub shift_integer() {
   return $value;
 }
 
+sub parse_integer_or_find {
+  my ($value, $map) = @_;
+  return undef unless defined $value;
+  $value =~ s/^0+(?!$)//;
+  if ($value =~ /^-?\d+$/) {
+    return $value;
+  }
+  if (ref $map eq 'HASH' && exists $map->{$value}) {
+    return $map->{$value};
+  }
+  return undef;
+}
+
 sub shift_number() {
   my $value = shift @ARGV;
   if (defined $value && $value !~ /^0$/) {
@@ -211,6 +225,26 @@ elsif ($command eq 'seek') {
   }
   else {
     fail "Missing position for command '$command'";
+  }
+}
+elsif ($command eq 'shuffle') {
+  my $mode_value = shift @ARGV;
+  if (!defined $mode_value) {
+    fail "Missing mode for command '$command'";
+  }
+  my $mode = parse_integer_or_find(
+    $mode_value,
+    {
+      off    => 1,
+      albums => 2,
+      tracks => 3,
+    }
+  );
+  if (defined $mode) {
+    delegate($command, $mode);
+  }
+  else {
+    fail "Invalid mode for command '$command': '$mode_value'";
   }
 }
 else {
