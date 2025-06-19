@@ -52,7 +52,7 @@ and opens it in the Preview app.
 
 ```sh
 media-control get | \
-    jq -r .artworkDataBase64 | \
+    jq -r .artworkData | \
     base64 -d > cover && \
     open -a Preview cover
 
@@ -67,8 +67,8 @@ Watches all changes and saves each new cover to a separate image file.
 ```sh
 index=0; media-control stream | \
     while IFS= read -r line; do \
-        if jq -e .payload.artworkDataBase64 <<< "$line" >/dev/null; then \
-            jq -r .payload.artworkDataBase64 <<< "$line" | base64 -d > cover; \
+        if jq -e .payload.artworkData <<< "$line" >/dev/null; then \
+            jq -r .payload.artworkData <<< "$line" | base64 -d > cover; \
             mv cover "cover-$index.$(file -b cover | sed 's/ .*$//' | tr A-Z a-z)"; \
             ((index++)); \
         fi \
@@ -82,12 +82,9 @@ index=0; media-control stream | \
 This replaces the base64 encoded image data with `true`, if it has a value.
 
 ```sh
-media-control stream | \
-    while IFS= read -r line; do \
-        jq -c 'if .payload.artworkDataBase64 != null then
-            .payload.artworkDataBase64 = true
-        end' <<< "$line"; \
-    done
+media-control stream | jq 'if .payload.artworkData != null then
+    .payload.artworkData = true
+end'
 ```
 
 ![](./assets/inspect-no-spam.png)

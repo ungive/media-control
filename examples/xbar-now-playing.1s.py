@@ -19,7 +19,7 @@ def limit(text, max_length):
 
 try:
     output = subprocess.check_output(
-        ["/opt/homebrew/bin/media-control", "get"], text=True
+        ["/opt/homebrew/bin/media-control", "get", "--micros"], text=True
     )
 except Exception as e:
     print(str(e))

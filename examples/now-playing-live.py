@@ -25,7 +25,7 @@ live = dict(defaults)
 def stream():
     global live
     process = subprocess.Popen(
-        ["media-control", "stream"],
+        ["media-control", "stream", "--micros"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
