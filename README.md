@@ -85,9 +85,7 @@ index=0; media-control stream | \
 This replaces the base64 encoded image data with `true`, if it has a value.
 
 ```sh
-media-control stream | jq 'if .payload.artworkData != null then
-    .payload.artworkData = true
-end'
+media-control stream | jq 'if .payload.artworkData != null then .payload.artworkData = true end'
 ```
 
 ![](./assets/inspect-no-spam.png)
