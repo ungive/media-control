@@ -1,3 +1,6 @@
+> [!WARNING]
+> This project is still in development and the API may break across versions.
+
 # media-control
 
 Control and observe media playback from the command line.
