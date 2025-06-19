@@ -143,7 +143,6 @@ elsif ($command eq 'send') {
   }
   if (defined $id) {
     if (has_command_id($id)) {
-      print("$command $id\n");
       delegate($command, $id);
     }
     else {
