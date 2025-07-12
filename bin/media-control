@@ -8,7 +8,7 @@ use FindBin;
 use File::Spec;
 use File::Basename;
 
-use constant VERSION => '0.4.0';
+use constant VERSION => '0.4.1';
 
 my $script_path =
   File::Spec->catfile($FindBin::Bin, '..', 'lib', 'media-control',
