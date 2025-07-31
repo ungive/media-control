@@ -9,7 +9,8 @@ Available for all macOS versions, including the latest macOS Tahoe.
 
 ## Installation and basic usage
 
-You can install `media-control` via Homebrew: 
+You can install `media-control` via
+[Homebrew](https://formulae.brew.sh/formula/media-control#default): 
 
 ```sh
 $ brew install media-control
