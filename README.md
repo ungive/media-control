@@ -28,7 +28,6 @@ $ media-control                    # Print help
 - [Display the current song in your menu bar](#display-the-current-song-in-your-menu-bar)
 - [Dump the cover image once](#dump-the-cover-image-once)
 - [Dump all cover images continuously during listening](#dump-all-cover-images-continuously-during-listening)
-- [Inspect raw data without spamming your terminal](#inspect-raw-data-without-spamming-your-terminal)
 - [Watch for song changes](#watch-for-song-changes)
 - [Live view of the current timeline position](#live-view-of-the-current-timeline-position)
 - [Pause media playback once the current track ends](#pause-media-playback-once-the-current-track-ends)
@@ -81,16 +80,6 @@ index=0; media-control stream | \
 ```
 
 ![](./assets/cover-dump.png)
-
-### Inspect raw data without spamming your terminal
-
-This replaces the base64 encoded image data with `true`, if it has a value.
-
-```sh
-media-control stream | jq 'if .payload.artworkData != null then .payload.artworkData = true end'
-```
-
-![](./assets/inspect-no-spam.png)
 
 ### Watch for song changes
 
