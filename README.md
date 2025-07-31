@@ -17,6 +17,7 @@ $ brew install media-control
 
 ```sh
 $ media-control get                # Get now playing information once
+$ media-control get -h             # More readable alternative, not for scripting
 $ media-control stream             # Stream now playing updates in real-time
 $ media-control toggle-play-pause  # Toggle playback
 $ media-control                    # Print help
