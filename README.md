@@ -9,8 +9,9 @@ Available for all macOS versions, including the latest macOS Tahoe.
 
 ## Installation and basic usage
 
+You can install `media-control` via Homebrew: 
+
 ```sh
-$ brew tap ungive/media-control
 $ brew install media-control
 ```
 
