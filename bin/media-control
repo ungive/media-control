@@ -18,6 +18,11 @@ my $framework_path = File::Spec->rel2abs(
     $FindBin::Bin, '..', 'Frameworks', 'MediaRemoteAdapter.framework'
   )
 );
+my $test_client_path = File::Spec->rel2abs(
+  File::Spec->catdir(
+    $FindBin::Bin, '..', 'lib', 'media-control', 'MediaRemoteAdapterTestClient'
+  )
+);
 
 #<<<
 my @command_list = (
@@ -98,6 +103,10 @@ HELP
   }
   print <<"HELP";
 
+Testing:
+  test   Tests whether the tool is able to operate on this macOS version.
+         An exit code other than 0 indicates that the tool is not functional.
+
 Options:
   get
     --now: Adds an "elapsedTimeNow" key with an estimation of the current
@@ -155,7 +164,7 @@ sub fail {
 
 sub delegate {
   my $name = shift;
-  my @args = ($script_path, $framework_path, $name);
+  my @args = ($script_path, $framework_path, $test_client_path, $name);
   exec $^X, @args, @_, @ARGV
     or die "Failed to execute $script_path: $!";
   exit 1;
@@ -233,6 +242,9 @@ elsif ($command eq 'stream') {
   delegate($command);
 }
 elsif ($command eq 'get') {
+  delegate($command);
+}
+elsif ($command eq 'test') {
   delegate($command);
 }
 elsif ($command eq 'send') {
