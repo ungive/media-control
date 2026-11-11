@@ -1,3 +1,6 @@
+![](https://img.shields.io/github/stars/ungive/mediaremote-adapter?style=flat&label=stars&logo=github&labelColor=444&color=ae8935&cacheSeconds=3600)
+[![](https://img.shields.io/homebrew/installs/dm/media-control?logo=homebrew&logoColor=white)](https://formulae.brew.sh/formula/media-control)
+
 # media-control
 
 Control and observe media playback from the command line.
