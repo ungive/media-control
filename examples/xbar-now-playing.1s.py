@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import subprocess
+import sys
 import time
 import json
 
@@ -19,25 +20,27 @@ def limit(text, max_length):
 
 try:
     output = subprocess.check_output(
-        ["/opt/homebrew/bin/media-control", "get", "--micros"], text=True
+        ["/opt/homebrew/bin/media-control", "get", "--micros", "--no-artwork"], text=True
     )
-except Exception as e:
+except (subprocess.CalledProcessError, OSError) as e:
     print(str(e))
-    exit(1)
+    sys.exit(1)
 data = json.loads(output)
 if data is None:
     print("\u25fc No media")
 else:
-    current_epoch = int(time.time() * 1000000)
-    time_diff = current_epoch - data["timestampEpochMicros"]
-    total_time = data["elapsedTimeMicros"] + data["playing"] * time_diff
     icon = "\u25b6" if data["playing"] else "\u23f8"
+    elapsed_time = data.get("elapsedTimeMicros")
+    timestamp = data.get("timestampEpochMicros")
+    duration = data.get("durationMicros")
+    if data["playing"] and all(
+        value is not None for value in (elapsed_time, timestamp, duration)
+    ):
+        current_epoch = int(time.time() * 1000000)
+        total_time = elapsed_time + current_epoch - timestamp
+        icon += "  " + format(total_time) + "\ufe58" + format(duration)
     print(
-        (
-            "\u25b6  " + format(total_time) + "\ufe58" + format(data["durationMicros"])
-            if data["playing"]
-            else "\u23f8"
-        )
+        icon
         + "  "
         + limit(data["title"], 64).strip()
         + " \u2013 "
