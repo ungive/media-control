@@ -24,6 +24,12 @@ my $test_client_path = File::Spec->rel2abs(
   )
 );
 
+# FIXME Some of these commands seem to have different names now? For Apple Music
+#   "get" prints that ID 10 has the name "BeginRewind" and not
+#   "StartBackwardSeek". Maintain backwards compatibility of course.
+# FIXME We can't send data to commands, e.g. "SeekToPlaybackPosition",
+#   "SetShuffleMode" or "RateTrack" likely need to be able to take options.
+
 #<<<
 my @command_list = (
   { name => 'play', id => 0, help => 'Start playback' },
