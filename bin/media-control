@@ -158,16 +158,6 @@ Licensed under the BSD 3-Clause License.
 VERSION
 }
 
-sub has_command_id {
-  my ($id) = @_;
-  foreach my $command (@command_list) {
-    if (defined $command->{id} && $command->{id} == $id) {
-      return 1;
-    }
-  }
-  return 0;
-}
-
 sub fail {
   my ($message) = @_;
   print STDERR "$message\n";
@@ -262,12 +252,7 @@ elsif ($command eq 'test') {
 elsif ($command eq 'send') {
   my $id = shift_integer();
   if (defined $id) {
-    if (has_command_id($id)) {
-      delegate($command, $id);
-    }
-    else {
-      fail "Unknown command ID: $id";
-    }
+    delegate($command, $id);
   }
   else {
     fail "Missing ID for command '$command'";
