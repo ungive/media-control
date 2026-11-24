@@ -109,6 +109,10 @@ HELP
   }
   print <<"HELP";
 
+  For a list of all commands that are supported by the current now playing
+  application, run "get". You can then use "send ID" to send a command that is
+  not mentioned in the above list.
+
 Testing:
   test   Tests whether the tool is able to operate on this macOS version.
          An exit code other than 0 indicates that the tool is not functional.
