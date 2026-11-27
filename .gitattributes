@@ -1,0 +1,5 @@
+# This is very important, otherwise media-control will not execute on some Macs.
+bin/media-control text eol=lf 
+
+# Shell scripts
+bin/*.sh text eol=lf 
